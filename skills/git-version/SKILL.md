@@ -1,6 +1,6 @@
 ---
 name: git-version
-description: Git 版本管理自动化规范。当需要自动生成 Commit Message、管理版本号、创建 Tag、生成 Changelog 或 Release Notes 时使用此 skill。
+description: Git 版本管理自动化规范。当用户明确要求提交代码、推送分支、生成 Commit Message、管理语义化版本、创建 Tag、生成 Changelog 或 Release Notes 时使用此 skill。涉及 tag 删除、远端推送、rebase、回滚、发布版本时必须先确认。
 ---
 
 # Git 版本管理自动化规范
@@ -13,6 +13,17 @@ description: Git 版本管理自动化规范。当需要自动生成 Commit Mess
 - 需要生成 Changelog
 - 需要生成 Release Notes
 - 需要自动化版本发布流程
+
+---
+
+## 使用原则
+
+- 先检查 `git status --short --branch`、当前分支和远端，再决定提交或发布操作。
+- 只提交与用户请求相关的改动；发现明显无关改动时先说明并确认。
+- 不自动执行破坏性操作：删除 tag、删除远端 tag、回滚、rebase、强推、批量推送所有 tag，必须先获得用户明确确认。
+- 推送前确认目标远端和分支；默认推送当前分支到对应上游。
+- 发布版本前必须确认工作区干净、测试结果、版本号、目标 tag 和 Changelog 内容。
+- 优先使用仓库已有的提交规范、分支规范、发布脚本和 CI 流程。
 
 ---
 
@@ -200,16 +211,16 @@ git tag -l "v1.*"
 # 查看 Tag 详情
 git show v1.0.0
 
-# 删除本地 Tag
+# 删除本地 Tag（危险操作，执行前必须确认目标 tag）
 git tag -d v1.0.0
 
-# 删除远程 Tag
+# 删除远程 Tag（危险操作，执行前必须确认远端和 tag）
 git push origin --delete v1.0.0
 
 # 推送 Tag 到远程
 git push origin v1.0.0
 
-# 推送所有 Tag
+# 推送所有 Tag（谨慎使用，执行前必须确认没有无关 tag）
 git push origin --tags
 ```
 
@@ -517,7 +528,7 @@ error: failed to push some refs
 **解决方案：**
 
 ```bash
-# 方案 1: Rebase（推荐，保持提交历史线性）
+# 方案 1: Rebase（会重写本地提交顺序，执行前确认工作区干净并备份当前 HEAD）
 git pull --rebase origin master
 git push origin master
 
@@ -578,7 +589,7 @@ git add <冲突文件>
 # 4. 继续 cherry-pick
 git cherry-pick --continue
 
-# 或跳过此提交
+# 或跳过此提交（可能丢弃目标提交变更，执行前必须确认）
 git cherry-pick --skip
 
 # 或放弃 cherry-pick
@@ -629,7 +640,7 @@ git tag -a v1.0.0 <commit-hash> -m "Release v1.0.0"
 
 # 3. 推送 Tag
 git push origin v1.0.0
-# 或推送所有 Tag
+# 或推送所有 Tag（谨慎使用，执行前必须确认没有无关 tag）
 git push origin --tags
 ```
 
@@ -638,10 +649,10 @@ git push origin --tags
 **解决方案：**
 
 ```bash
-# 1. 删除本地 Tag
+# 1. 删除本地 Tag（危险操作，执行前必须确认目标 tag）
 git tag -d v1.0.0
 
-# 2. 删除远程 Tag
+# 2. 删除远程 Tag（危险操作，执行前必须确认远端和 tag）
 git push origin --delete v1.0.0
 
 # 3. 在正确的提交上重新创建

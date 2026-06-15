@@ -1,17 +1,27 @@
 ---
 name: nodejs
-description: NodeJS 后端开发规范。当开发 NodeJS 项目、实现 REST API、TypeORM 数据访问、JWT 认证、权限控制时使用此 skill。
+description: NestJS 后端开发规范。当开发 Node.js/NestJS REST API、TypeORM 数据访问、JWT 认证、权限控制、后台管理系统服务端时使用此 skill。普通脚本、Express/Koa 项目仅在用户明确要求套用时使用。
 ---
 
-# NodeJS 后端开发规范
+# Node.js / NestJS 后端开发规范
 
 ## 触发条件
 
-- 开发 NodeJS 项目
+- 开发 Node.js / NestJS 项目
 - 实现 REST API
 - 使用 TypeORM 数据访问
 - 实现 JWT 认证
 - 实现权限控制
+
+---
+
+## 使用原则
+
+- 先识别项目已有框架、目录结构、ORM、认证方式和响应格式，再套用本规范。
+- 不为符合模板而强行重构既有代码；优先沿用项目已有 module、DTO、guard、filter 和 service 风格。
+- 所有权限必须在 Guard/服务端逻辑校验，不能依赖前端隐藏按钮或菜单。
+- JWT secret、数据库密码、Redis 密码等敏感信息必须来自环境变量、密钥管理或配置中心。
+- 对新增/修改接口补充 DTO 校验、异常处理、权限装饰器和必要测试。
 
 ---
 
@@ -468,7 +478,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
       msg = exception.message;
     }
 
-    response.status(200).json({
+    const httpStatus = exception instanceof HttpException ? exception.getStatus() : 500;
+
+    response.status(httpStatus).json({
       code,
       msg,
       data: null,
@@ -497,6 +509,11 @@ export class BusinessException extends Error {
 - [ ] 添加权限装饰器
 - [ ] 分页接口使用 PageResult
 - [ ] DTO 使用 class-validator 校验
+- [ ] JWT secret、数据库密码、Redis 密码不硬编码在代码或示例配置中
+- [ ] 密码使用 bcrypt/argon2 等强哈希，不返回 password 字段
+- [ ] 权限、数据权限、租户隔离在 Guard 或服务端逻辑强制校验
+- [ ] 登录、短信、验证码、上传等高风险接口具备限流或重复提交保护
+- [ ] 日志不输出 Token、密码、身份证、手机号全量等敏感信息
 - [ ] 实体继承 BaseEntity
 - [ ] 使用 TypeORM 逻辑删除
 - [ ] API 添加 @ApiOperation 注解

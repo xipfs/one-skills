@@ -16,11 +16,7 @@
 | Skill | 描述 | 技术栈 |
 | --- | --- | --- |
 | [`spring-boot`](https://skills.sh/xipfs/one-skills/spring-boot) | Java 后端开发规范 | Spring Boot + MyBatis-Plus |
-| [`nodejs`](https://skills.sh/xipfs/one-skills/nestjs) | Node.js 后端开发规范 | NestJS + TypeORM |
-|                                                              |                      |                            |
-|                                                              |                      |                            |
-|                                                              |                      |                            |
-|                                                              |                      |                            |
+| [`nodejs`](https://skills.sh/xipfs/one-skills/nodejs) | Node.js 后端开发规范 | NestJS + TypeORM |
 
 ### 数据库
 

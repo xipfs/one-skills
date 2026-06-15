@@ -1,6 +1,6 @@
 ---
 name: spring-boot
-description: Spring Boot 后端开发规范。当开发 Spring Boot 项目、实现 REST API、MyBatis-Plus 数据访问、权限认证、JWT/Redis Token 时使用此 skill。
+description: Spring Boot 后端开发规范。当开发 Spring Boot REST API、MyBatis-Plus 数据访问、权限认证、JWT/Redis Token、后台管理系统服务端时使用此 skill。优先遵循项目已有架构和安全配置。
 ---
 
 # Spring Boot 后端开发规范
@@ -12,6 +12,16 @@ description: Spring Boot 后端开发规范。当开发 Spring Boot 项目、实
 - 使用 MyBatis-Plus 数据访问
 - 实现 JWT/Redis Token 认证
 - 实现权限控制
+
+---
+
+## 使用原则
+
+- 先识别项目已有包结构、Spring Boot 版本、ORM、认证方式和统一响应格式，再套用本规范。
+- 不为符合模板而强行重构既有代码；优先沿用项目已有命名、异常、权限和分页实现。
+- 所有认证、权限、数据权限必须在服务端强制校验，不能依赖前端隐藏按钮或菜单。
+- 密码、Token、JWT secret、数据库密码等敏感信息必须来自环境变量、密钥管理或配置中心，示例值禁止用于真实环境。
+- 对新增/修改接口补充参数校验、异常处理、权限注解和必要测试。
 
 ---
 
@@ -454,7 +464,7 @@ security:
   session:
     mode: jwt # 或 redis-token
     jwt:
-      secret: SecretKey012345678901234567890123456789
+      secret: ${JWT_SECRET} # 必须来自环境变量或密钥管理，禁止硬编码真实密钥
       issuer: youlai-boot
     access-token-ttl: 7200 # 2小时
     refresh-token-ttl: 604800 # 7天
@@ -576,6 +586,11 @@ public class BusinessException extends RuntimeException {
 - [ ] 添加权限注解
 - [ ] 分页接口使用 PageResult
 - [ ] 参数校验使用 @Valid
+- [ ] JWT secret、数据库密码、Redis 密码不硬编码在代码或示例配置中
+- [ ] 密码使用 BCrypt/Argon2 等强哈希，不返回 password 字段
+- [ ] 权限、数据权限、租户隔离在服务端强制校验
+- [ ] 登录、短信、验证码、上传等高风险接口具备限流或重复提交保护
+- [ ] 日志不输出 Token、密码、身份证、手机号全量等敏感信息
 - [ ] 重要操作记录日志
 - [ ] 使用 @Transactional 处理事务
 - [ ] 实体继承 BaseEntity
