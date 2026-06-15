@@ -1,6 +1,6 @@
 ---
 name: spring-boot
-description: Spring Boot 后端开发规范。当开发 Spring Boot REST API、MyBatis-Plus 数据访问、权限认证、JWT/Redis Token、后台管理系统服务端时使用此 skill。优先遵循项目已有架构和安全配置。
+description: Spring Boot 后端开发规范。当开发 Spring Boot REST API、MyBatis-Plus 数据访问、权限认证、JWT/Redis Token、后台管理系统服务端，或需要生成/优化 Java 包结构、Controller、Service、Mapper、Entity、DTO 时使用此 skill。新增 Java 代码必须按职责分包。
 ---
 
 # Spring Boot 后端开发规范
@@ -18,7 +18,9 @@ description: Spring Boot 后端开发规范。当开发 Spring Boot REST API、M
 ## 使用原则
 
 - 先识别项目已有包结构、Spring Boot 版本、ORM、认证方式和统一响应格式，再套用本规范。
-- 不为符合模板而强行重构既有代码；优先沿用项目已有命名、异常、权限和分页实现。
+- 若已有包结构合理，沿用现有分层；若现有代码集中在单一 package，新增 Java 代码必须从本次开始按职责分包，不要继续扩大单 package。
+- 不为符合模板而强行迁移旧代码；如果需要重组旧代码包结构，先向用户说明影响范围并确认。
+- 优先沿用项目已有命名、异常、权限和分页实现，但不能因此破坏 Controller、Service、Mapper、Entity、DTO 的职责分层。
 - 所有认证、权限、数据权限必须在服务端强制校验，不能依赖前端隐藏按钮或菜单。
 - 密码、Token、JWT secret、数据库密码等敏感信息必须来自环境变量、密钥管理或配置中心，示例值禁止用于真实环境。
 - 对新增/修改接口补充参数校验、异常处理、权限注解和必要测试。
@@ -38,6 +40,29 @@ description: Spring Boot 后端开发规范。当开发 Spring Boot REST API、M
 ---
 
 ## Part 2: 目录结构
+
+### 包结构强制规则
+
+创建或优化 Java 类时，必须按职责分包，不允许把 Controller、Service、Mapper、Entity、DTO、VO、Config、Exception 全部放在同一个 package 下。
+
+| 包名 | 放置内容 |
+| --- | --- |
+| `controller` | REST Controller，只处理 HTTP 入参、权限注解和响应包装 |
+| `service` | Service 接口，定义业务能力 |
+| `service.impl` | Service 实现，承载业务流程、事务和领域校验 |
+| `mapper` | MyBatis-Plus Mapper，只处理数据访问 |
+| `entity` | 数据库实体，与表结构对应 |
+| `dto` | 请求参数、表单、分页查询对象 |
+| `vo` | 响应视图对象，不返回实体或敏感字段 |
+| `converter` | Entity、DTO、VO 转换 |
+| `config` | Spring、MyBatis、Redis、安全等配置 |
+| `exception` | 业务异常和全局异常处理 |
+
+单 package 项目处理规则：
+
+- 新增功能必须创建对应分层 package，例如 `module/system/user/controller`、`service`、`service/impl`、`mapper`、`entity`、`dto`、`vo`。
+- 修改既有单 package 文件时，可以小范围保持原路径；但新增配套类必须进入职责包。
+- 发现用户要求“优化项目结构”时，应提出包迁移计划，并在迁移前确认，避免一次性移动大量文件导致导入路径和组件扫描失效。
 
 ```
 src/main/java/com/youlai/
@@ -581,6 +606,8 @@ public class BusinessException extends RuntimeException {
 ## Part 10: 代码质量检查清单
 
 - [ ] 遵循 RESTful API 路径规范
+- [ ] 新增 Java 类按职责分包，没有继续堆到单一 package
+- [ ] Controller、Service、Mapper、Entity、DTO、VO 职责清晰分离
 - [ ] 使用统一响应格式
 - [ ] 实现全局异常处理
 - [ ] 添加权限注解
