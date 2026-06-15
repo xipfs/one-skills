@@ -26,13 +26,13 @@
 
 | Skill | 描述 | 技术栈 |
 | --- | --- | --- |
-| [`mysql-design`](https://skills.sh/youlaitech/youlai-skills/mysql-design) | MySQL 数据库设计规范 | MySQL 8 |
+| [`mysql-design`](https://skills.sh/xipfs/one-skills/mysql-design) | MySQL 数据库设计规范 | MySQL 8 |
 
 ### 开发工具
 
 | Skill | 描述 | 适用场景 |
 | --- | --- | --- |
-| [`git-version`](https://skills.sh/youlaitech/youlai-skills/git-version) | Git 版本管理自动化规范 | Commit/Tag/Changelog/Release Notes |
+| [`git-version`](https://skills.sh/xipfs/one-skills/git-version) | Git 版本管理自动化规范 | Commit/Tag/Changelog/Release Notes |
 
 ## 安装
 
